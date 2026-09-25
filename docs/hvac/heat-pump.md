@@ -12,7 +12,7 @@ title: Heat Pump — Unit Lookup
   .roomtag { display: inline-block; background: #159957; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.9em; }
 </style>
 
-<div id="content">Loading unit data…</div>
+<div id="hp-content">Loading unit data…</div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
@@ -59,11 +59,11 @@ function render(row) {
     html += `<tr><td>${labelMap[key]}</td><td>${value}</td></tr>`;
   }
   html += '</table>';
-  document.getElementById('content').innerHTML = html;
+  document.getElementById('hp-content').innerHTML = html;
 }
 
 if (!id) {
-  document.getElementById('content').innerHTML =
+  document.getElementById('hp-content').innerHTML =
     '<div class="warn">No unit ID provided in the link. Scan the QR code on the unit itself, or add <code>?id=</code> to the URL.</div>';
 } else {
   fetch(dataUrl)
@@ -74,12 +74,12 @@ if (!id) {
       if (match) {
         render(match);
       } else {
-        document.getElementById('content').innerHTML =
+        document.getElementById('hp-content').innerHTML =
           `<div class="warn">No record found for unit ID "${id}". Check the equipment sheet or contact Engineering.</div>`;
       }
     })
     .catch(() => {
-      document.getElementById('content').innerHTML =
+      document.getElementById('hp-content').innerHTML =
         '<div class="warn">Could not load equipment data. Check your connection and try again.</div>';
     });
 }
