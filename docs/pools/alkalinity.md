@@ -6,6 +6,22 @@ title: Pool Alkalinity Dosing
 
 Reference for raising total alkalinity using sodium bicarbonate (baking soda).
 
+| Measured Alkalinity (PPM) | Pool (kg) | Indoor (kg) | Outdoor Large (kg) | Outdoor Small (kg) |
+|---|---|---|---|---|
+| 0   | 30 |  |  |  |
+| 10  | 28 |  |  |  |
+| 20  | 25 |  |  |  |
+| 30  | 22 |  |  |  |
+| 40  | 20 |  |  |  |
+| 50  | 17 |  |  |  |
+| 60  | 15 |  |  |  |
+| 70  | 12 |  |  |  |
+| 80  | 13 |  |  |  |
+| 90  | 10 |  |  |  |
+| 100 | 6  |  |  |  |
+| 110 | 3  |  |  |  |
+| 120 | 0  |  |  |  |
+
 ## Formula
 
 **180 g of baking soda per 10,000 litres raises alkalinity by 10 ppm**
