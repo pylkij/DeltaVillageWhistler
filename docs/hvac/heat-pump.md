@@ -84,3 +84,15 @@ if (!id) {
     });
 }
 </script>
+
+
+### Troubleshooting
+
+- Turn off the heat pump fuse.
+- Reset the thermostat. Make sure you return settings to normal after.
+- Check that the filter is clean. If not, replace.
+- Clean the coils with chemical coil cleaner.
+- Drain the condensate pump.
+- Turn on the heat pump fuse.
+
+Some heat pumps will take up to 10 minutes to turn back on. Check temperature at the vent with the thermal gun. If the unit is still not engaging, call Hakkon with the information provided above.
