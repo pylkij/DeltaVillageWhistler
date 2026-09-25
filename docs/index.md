@@ -26,6 +26,9 @@ Internal reference wiki for hotel mechanical systems: dosing formulas, maintenan
 ### Plumbing
 *Coming soon*
 
+### Appliances
+- [Hoshizaki](appliances/fridges/hoshizaki.md)
+
 ---
 
 *Maintained by the Engineering team. Found an error or missing spec? Open an issue or pull request on [GitHub](https://github.com/PylkijSlon/DeltaVillageWhistler).*
