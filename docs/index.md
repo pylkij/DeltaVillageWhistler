@@ -12,7 +12,7 @@ Internal reference wiki for hotel mechanical systems: dosing formulas, maintenan
 - [Alkalinity Dosing](pools/alkalinity.md)
 
 ### HVAC
-*Coming soon*
+- [Heat Pump](hvac/heat-pump.md)
 
 ### Elevators
 *Coming soon*
