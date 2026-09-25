@@ -1,28 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Heat Pump — Unit Lookup</title>
-<style>
-  body { font-family: -apple-system, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 16px; color: #222; }
-  h1 { font-size: 1.3em; }
-  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-  td { padding: 8px 4px; border-bottom: 1px solid #ddd; vertical-align: top; }
-  td:first-child { font-weight: 600; width: 45%; color: #444; }
-  .warn { background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 12px; }
-  .roomtag { display: inline-block; background: #005f73; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.9em; }
-</style>
-</head>
-<body>
+---
+layout: default
+title: Heat Pump — Unit Lookup
+---
 
-<h1>Water Source Heat Pump</h1>
+<style>
+  /* Only page-specific tweaks — fonts/colors/header come from the site theme */
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  td { padding: 8px 4px; border-bottom: 1px solid #eee; vertical-align: top; }
+  td:first-child { font-weight: 600; width: 45%; }
+  .warn { background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 12px; }
+  .roomtag { display: inline-block; background: #159957; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.9em; }
+</style>
+
 <div id="content">Loading unit data…</div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
-const dataUrl = '../data/heat-pump.csv'; // relative to /hvac/heat-pump.html
+const dataUrl = '../data/equipment.csv'; // relative to /hvac/heat-pump.html
 
 function parseCSV(text) {
   const lines = text.trim().split('\n');
@@ -89,6 +84,3 @@ if (!id) {
     });
 }
 </script>
-
-</body>
-</html>
