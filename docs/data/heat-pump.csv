@@ -1,0 +1,2 @@
+id,room_number,equipment_type,manufacturer,model,serial,install_date,installed_by,voltage,refrigerant_type,refrigerant_charge_oz,compressor_rla,compressor_lra,blower_fla,design_pressure_high,design_pressure_low,last_serviced,next_service_due,notes
+1630,1630,Water Source Heat Pump,Heat Controller LLC,HBH012A1C30CRS,192911095,2019,John,208/230V 1Ph 60Hz,R410A,23,5.1,32.5,0.8,600,250,,,
