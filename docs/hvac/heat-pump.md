@@ -10,6 +10,10 @@ title: Heat Pump — Unit Lookup
   td:first-child { font-weight: 600; width: 45%; }
   .warn { background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 12px; }
   .roomtag { display: inline-block; background: #159957; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.9em; }
+  .id-form { display: flex; gap: 8px; margin-top: 10px; }
+  .id-form input { flex: 1; padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1em; }
+  .id-form button { padding: 8px 14px; border: none; border-radius: 6px; background: #159957; color: #fff; font-size: 1em; cursor: pointer; }
+  .id-form button:hover { background: #10794a; }
 </style>
 
 <div id="hp-content">Loading unit data…</div>
@@ -27,6 +31,29 @@ function parseCSV(text) {
     const row = {};
     headers.forEach((h, i) => row[h] = cells[i] || '');
     return row;
+  });
+}
+
+function idFormHtml(prefillId) {
+  const value = prefillId ? ` value="${prefillId.replace(/"/g, '&quot;')}"` : '';
+  return `
+    <form class="id-form" id="hp-id-form">
+      <input type="text" id="hp-id-input" placeholder="Enter unit ID (e.g. room number)"${value} autofocus>
+      <button type="submit">Go</button>
+    </form>`;
+}
+
+function wireIdForm() {
+  const form = document.getElementById('hp-id-form');
+  if (!form) return;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newId = document.getElementById('hp-id-input').value.trim();
+    if (newId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', newId);
+      window.location.href = url.toString();
+    }
   });
 }
 
@@ -59,12 +86,16 @@ function render(row) {
     html += `<tr><td>${labelMap[key]}</td><td>${value}</td></tr>`;
   }
   html += '</table>';
+  html += idFormHtml(row.id || '');
   document.getElementById('hp-content').innerHTML = html;
+  wireIdForm();
 }
 
 if (!id) {
   document.getElementById('hp-content').innerHTML =
-    '<div class="warn">No unit ID provided in the link. Scan the QR code on the unit itself, or add <code>?id=</code> to the URL.</div>';
+    '<div class="warn">No unit ID provided in the link. Scan the QR code on the unit itself, or enter it below.</div>' +
+    idFormHtml();
+  wireIdForm();
 } else {
   fetch(dataUrl)
     .then(res => res.text())
@@ -75,12 +106,16 @@ if (!id) {
         render(match);
       } else {
         document.getElementById('hp-content').innerHTML =
-          `<div class="warn">No record found for unit ID "${id}". Check the equipment sheet or contact Engineering.</div>`;
+          `<div class="warn">No record found for unit ID "${id}". Check the equipment sheet or contact Engineering, or try a different ID below.</div>` +
+          idFormHtml(id);
+        wireIdForm();
       }
     })
     .catch(() => {
       document.getElementById('hp-content').innerHTML =
-        '<div class="warn">Could not load equipment data. Check your connection and try again.</div>';
+        '<div class="warn">Could not load equipment data. Check your connection and try again.</div>' +
+        idFormHtml(id);
+      wireIdForm();
     });
 }
 </script>
