@@ -1,3 +1,26 @@
-theme: jekyll-theme-cayman
 title: Delta Village Whistler - Mechanical Reference
 description: Internal reference wiki for hotel mechanical systems
+
+remote_theme: just-the-docs/just-the-docs
+
+# Enables built-in client-side search
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+
+# Sidebar/nav settings
+nav_sort: case_insensitive
+heading_anchors: true
+
+# Optional: adds a "back to top" link, aux nav, etc.
+aux_links:
+  "Report an issue":
+    - "https://github.com/pylkij/DeltaVillageWhistler/issues"
+  "Facility Manuals (external)":
+    - "https://github.com/pylkij/DeltaVillageWhistler/tree/main/manuals"
