@@ -14,6 +14,13 @@ search:
   rel_url: true
   button: false
 
+# Enables in-line HTML
+compress_html:
+  clippings: []
+  comments: []
+  endings: []
+  blanklines: true
+
 # Sidebar/nav settings
 nav_sort: case_insensitive
 heading_anchors: true
