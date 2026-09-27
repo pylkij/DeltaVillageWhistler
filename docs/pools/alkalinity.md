@@ -60,7 +60,7 @@ Since this is a >30 ppm correction, apply the 0.75 staging factor:
 4. Add remaining amount based on actual reading — do not assume it hit target exactly
 
 ## Calculator
-<iframe src="alkalinity-calculator.html" width="100%" height="600" style="border:none;"></iframe>
+<iframe src="{{ '/scripts/alkalinity-calculator.html' | relative_url }}" width="100%" height="600" style="border:none;"></iframe>
 
 ## Notes
 
