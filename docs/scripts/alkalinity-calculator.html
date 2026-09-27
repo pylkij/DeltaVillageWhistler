@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alkalinity Dosing Calculator</title>
+<style>
+  :root {
+    --deep: #0d3b4f;
+    --teal: #1c6e7c;
+    --aqua: #4fb3bf;
+    --foam: #eaf6f6;
+    --sand: #f7f4ec;
+    --ink: #1a2b2e;
+    --warn: #c96a2c;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--sand);
+    color: var(--ink);
+    padding: 2rem 1rem;
+  }
+  .card {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(13,59,79,0.15);
+    overflow: hidden;
+  }
+  .card__header {
+    background: var(--deep);
+    color: var(--foam);
+    padding: 1.25rem 1.5rem;
+  }
+  .card__header h1 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .card__header p {
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: #b9dee2;
+  }
+  .card__body { padding: 1.5rem; }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--teal);
+    margin-bottom: 0.35rem;
+  }
+  .field { margin-bottom: 1.15rem; }
+  select, input[type="number"] {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    font-size: 1rem;
+    border: 1.5px solid #cfe3e5;
+    border-radius: 6px;
+    background: var(--foam);
+    color: var(--ink);
+  }
+  select:focus, input:focus {
+    outline: 2px solid var(--aqua);
+    outline-offset: 1px;
+  }
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--teal);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button:hover { background: var(--deep); }
+  .result {
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem;
+    border-radius: 6px;
+    background: var(--foam);
+    border-left: 4px solid var(--aqua);
+    display: none;
+  }
+  .result.show { display: block; }
+  .result.at-target {
+    border-left-color: #4a9b5e;
+  }
+  .result h2 {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    color: var(--deep);
+  }
+  .result .amount {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--deep);
+  }
+  .result .amount small {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--teal);
+  }
+  .result .staged-note {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--warn);
+    line-height: 1.4;
+  }
+  .result .full-dose {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: #5a6b6d;
+  }
+  .error {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--warn);
+    display: none;
+  }
+  .error.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card__header">
+    <h1>Alkalinity Dosing Calculator</h1>
+    <p>Baking soda amount to reach 120 ppm total alkalinity</p>
+  </div>
+  <div class="card__body">
+    <div class="field">
+      <label for="pool-select">Pool</label>
+      <select id="pool-select">
+        <option value="143800">Pool (143,800 L)</option>
+        <option value="6600">Indoor (6,600 L)</option>
+        <option value="6100">Outdoor Large (6,100 L)</option>
+        <option value="3200">Outdoor Small (3,200 L)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="ppm-input">Current alkalinity (ppm)</label>
+      <input type="number" id="ppm-input" min="0" max="120" step="1" placeholder="e.g. 40">
+    </div>
+    <button id="calc-btn" onclick="calculate()">Calculate dose</button>
+
+    <p class="error" id="error-msg">Enter a value between 0 and 120 ppm.</p>
+
+    <div class="result" id="result">
+      <h2 id="result-heading"></h2>
+      <div class="amount" id="result-amount"></div>
+      <p class="full-dose" id="full-dose-note"></p>
+      <p class="staged-note" id="staged-note"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TARGET_PPM = 120;
+  const GRAMS_PER_10PPM_PER_10000L = 180;
+
+  function calculate() {
+    const volume = parseFloat(document.getElementById('pool-select').value);
+    const current = parseFloat(document.getElementById('ppm-input').value);
+    const errorEl = document.getElementById('error-msg');
+    const resultEl = document.getElementById('result');
+
+    if (isNaN(current) || current < 0 || current > 120) {
+      errorEl.classList.add('show');
+      resultEl.classList.remove('show');
+      return;
+    }
+    errorEl.classList.remove('show');
+
+    const increase = TARGET_PPM - current;
+    const headingEl = document.getElementById('result-heading');
+    const amountEl = document.getElementById('result-amount');
+    const fullDoseEl = document.getElementById('full-dose-note');
+    const stagedEl = document.getElementById('staged-note');
+
+    if (increase <= 0) {
+      headingEl.textContent = 'Already at target';
+      amountEl.textContent = 'No baking soda needed';
+      fullDoseEl.textContent = '';
+      stagedEl.textContent = '';
+      resultEl.classList.add('show');
+      resultEl.classList.add('at-target');
+      return;
+    }
+    resultEl.classList.remove('at-target');
+
+    const fullDoseGrams = (increase / 10) * GRAMS_PER_10PPM_PER_10000L * (volume / 10000);
+    const fullDoseKg = fullDoseGrams / 1000;
+
+    if (increase > 30) {
+      const stagedKg = fullDoseKg * 0.75;
+      headingEl.textContent = 'Add now (staged first dose)';
+      amountEl.innerHTML = stagedKg.toFixed(2) + ' <small>kg baking soda</small>';
+      fullDoseEl.textContent = 'Full calculated dose: ' + fullDoseKg.toFixed(2) + ' kg';
+      stagedEl.textContent = 'Correction is over 30 ppm — add 75% first, circulate 4–6 hours, retest, then add the remainder based on the new reading.';
+    } else {
+      headingEl.textContent = 'Add this amount';
+      amountEl.innerHTML = fullDoseKg.toFixed(2) + ' <small>kg baking soda</small>';
+      fullDoseEl.textContent = '';
+      stagedEl.textContent = '';
+    }
+    resultEl.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
