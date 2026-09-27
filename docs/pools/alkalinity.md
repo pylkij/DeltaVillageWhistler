@@ -59,8 +59,10 @@ Since this is a >30 ppm correction, apply the 0.75 staging factor:
 3. Retest alkalinity
 4. Add remaining amount based on actual reading — do not assume it hit target exactly
 
+## Calculator
+<iframe src="alkalinity-calculator.html" width="100%" height="600" style="border:none;"></iframe>
+
 ## Notes
 
 - Target range for most pools: 80–120 ppm total alkalinity
-- Baking soda affects pH only mildly — use soda ash instead if the primary goal is raising pH
-- Low starting alkalinity (like 40 ppm) often correlates with unstable pH — check pH at the same time
+- Low starting alkalinity (like 40 ppm) often correlates with unstable pH. Check pH at the same time
