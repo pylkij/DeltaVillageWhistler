@@ -1,5 +1,7 @@
 ---
 title: Pool Alkalinity Dosing
+nav_order: 2
+parent: Pool
 ---
 
 # Pool Alkalinity — Baking Soda Dosing

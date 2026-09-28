@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dechlor Dosing Calculator</title>
+<style>
+  :root {
+    --deep: #0d3b4f;
+    --teal: #1c6e7c;
+    --aqua: #4fb3bf;
+    --foam: #eaf6f6;
+    --sand: #f7f4ec;
+    --ink: #1a2b2e;
+    --warn: #c96a2c;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--sand);
+    color: var(--ink);
+    padding: 2rem 1rem;
+  }
+  .card {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(13,59,79,0.15);
+    overflow: hidden;
+  }
+  .card__header {
+    background: var(--deep);
+    color: var(--foam);
+    padding: 1.25rem 1.5rem;
+  }
+  .card__header h1 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .card__header p {
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    color: #b9dee2;
+  }
+  .card__body { padding: 1.5rem; }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--teal);
+    margin-bottom: 0.35rem;
+  }
+  .field { margin-bottom: 1.15rem; }
+  select, input[type="number"] {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    font-size: 1rem;
+    border: 1.5px solid #cfe3e5;
+    border-radius: 6px;
+    background: var(--foam);
+    color: var(--ink);
+  }
+  select:focus, input:focus {
+    outline: 2px solid var(--aqua);
+    outline-offset: 1px;
+  }
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--teal);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button:hover { background: var(--deep); }
+  .result {
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem;
+    border-radius: 6px;
+    background: var(--foam);
+    border-left: 4px solid var(--aqua);
+    display: none;
+  }
+  .result.show { display: block; }
+  .result.at-target {
+    border-left-color: #4a9b5e;
+  }
+  .result h2 {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    color: var(--deep);
+  }
+  .result .amount {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--deep);
+  }
+  .result .amount small {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--teal);
+  }
+  .result .volume-note {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--teal);
+  }
+  .result .staged-note {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--warn);
+    line-height: 1.4;
+  }
+  .result .full-dose {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: #5a6b6d;
+  }
+  .error {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--warn);
+    display: none;
+  }
+  .error.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card__header">
+    <h1>Dechlor Dosing Calculator</h1>
+    <p>Aqua Balance Dechlor (sodium thiosulfate) to lower free chlorine</p>
+  </div>
+  <div class="card__body">
+    <div class="field">
+      <label for="pool-select">Pool</label>
+      <select id="pool-select">
+        <option value="143800">Pool (143,800 L)</option>
+        <option value="6600">Indoor (6,600 L)</option>
+        <option value="6100">Outdoor Large (6,100 L)</option>
+        <option value="3200">Outdoor Small (3,200 L)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="current-input">Current chlorine (ppm)</label>
+      <input type="number" id="current-input" min="0" max="100" step="0.1" placeholder="e.g. 10">
+    </div>
+    <div class="field">
+      <label for="target-input">Target chlorine (ppm)</label>
+      <input type="number" id="target-input" min="0" max="100" step="0.1" value="5">
+    </div>
+    <button id="calc-btn" onclick="calculate()">Calculate dose</button>
+
+    <p class="error" id="error-msg">Enter valid ppm values (0 to 100).</p>
+
+    <div class="result" id="result">
+      <h2 id="result-heading"></h2>
+      <div class="amount" id="result-amount"></div>
+      <p class="volume-note" id="volume-note"></p>
+      <p class="staged-note" id="staged-note"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Metric dosing rate for Aqua Balance Dechlor (sodium thiosulfate):
+  // 1 g per 1,000 L lowers free chlorine by 1 ppm (mg/L)
+  const GRAMS_PER_1000L_PER_PPM = 1;
+  const BULK_DENSITY_G_PER_ML = 1.0; // approximate, varies with packing
+
+  function calculate() {
+    const volumeL = parseFloat(document.getElementById('pool-select').value);
+    const current = parseFloat(document.getElementById('current-input').value);
+    const target = parseFloat(document.getElementById('target-input').value);
+    const errorEl = document.getElementById('error-msg');
+    const resultEl = document.getElementById('result');
+
+    if (isNaN(current) || isNaN(target) || current < 0 || current > 100 || target < 0 || target > 100) {
+      errorEl.classList.add('show');
+      resultEl.classList.remove('show');
+      return;
+    }
+    errorEl.classList.remove('show');
+
+    const reduction = current - target;
+    const headingEl = document.getElementById('result-heading');
+    const amountEl = document.getElementById('result-amount');
+    const volumeEl = document.getElementById('volume-note');
+    const noteEl = document.getElementById('staged-note');
+
+    if (reduction <= 0) {
+      headingEl.textContent = 'Already at or below target';
+      amountEl.textContent = 'No dechlor needed';
+      volumeEl.textContent = '';
+      noteEl.textContent = '';
+      resultEl.classList.add('show');
+      resultEl.classList.add('at-target');
+      return;
+    }
+    resultEl.classList.remove('at-target');
+
+    const grams = reduction * GRAMS_PER_1000L_PER_PPM * (volumeL / 1000);
+    const mL = grams / BULK_DENSITY_G_PER_ML;
+
+    headingEl.textContent = 'Add this amount';
+    amountEl.innerHTML = grams >= 1000
+      ? (grams / 1000).toFixed(2) + ' <small>kg dechlor</small>'
+      : grams.toFixed(0) + ' <small>g dechlor</small>';
+    volumeEl.textContent = '\u2248 ' + Math.round(mL) + ' mL dry product (approx.)';
+    noteEl.textContent = 'Pre-dissolve in water, circulate, and retest before adding more.';
+    resultEl.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
